@@ -1,9 +1,11 @@
 import { useEffect, useState } from 'react'
+import { Link } from 'react-router-dom'
 import ListGroup from 'react-bootstrap/ListGroup'
 import ListGroupItem from 'react-bootstrap/ListGroupItem'
 import Card from 'react-bootstrap/Card'
 import Button from 'react-bootstrap/Button'
 import SWpediaAPI from '../services/SWpediaAPI'
+import { getIdFromUrl } from '../helpers'
 
 const FilmsPage = () => {
 	const [films, setFilms] = useState([])
@@ -16,6 +18,10 @@ const FilmsPage = () => {
 	useEffect(() => {
 		getFilms()
 	}, [])
+
+	if (!films) {
+		return <p>Loading...</p>
+	}
 
 	return (
 		<>
@@ -32,7 +38,7 @@ const FilmsPage = () => {
 									<ListGroupItem><b>Released</b> {film.release_date}</ListGroupItem>
 									<ListGroupItem>{film.characters.length} <b>characters</b></ListGroupItem>
 								</ListGroup>
-								<Button variant="primary">Read more</Button>
+								<Button variant="primary" as={Link} to={`/films/${getIdFromUrl(film.url)}`}>Read more</Button>
 							</Card.Body>
 						</Card>
 					)}
