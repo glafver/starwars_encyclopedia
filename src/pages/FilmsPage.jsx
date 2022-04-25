@@ -9,17 +9,23 @@ import { getIdFromUrl } from '../helpers'
 
 const FilmsPage = () => {
 	const [films, setFilms] = useState([])
+	const [page, setPage] = useState(1)
+	const [total_pages, setTotalPages] = useState(0)
 
 	const getFilms = async () => {
 		const data = await SWpediaAPI.get('films')
-		setFilms(data.results)
+		setFilms(data)
 	}
 
 	useEffect(() => {
 		getFilms()
 	}, [])
 
-	if (!films) {
+	if (films.length !== 0 && total_pages === 0 && page === 1) {
+		setTotalPages(Math.ceil(films.count / films.results.length))
+	}
+
+	if (films.length === 0) {
 		return <p>Loading...</p>
 	}
 
@@ -27,10 +33,10 @@ const FilmsPage = () => {
 		<>
 			<h1>Films</h1>
 
-			{films.length > 0 && (
+			{films.results.length > 0 && (
 				<div className='d-flex flex-wrap'>
-					{films.map(film =>
-						<Card className='col-4' key={film.title}>
+					{films.results.map(film =>
+						<Card className='col-6' key={film.title}>
 							<Card.Header as="h5">{film.title}</Card.Header>
 							<Card.Body>
 								<ListGroup className="list-group-flush">
@@ -45,6 +51,26 @@ const FilmsPage = () => {
 				</div>
 
 			)}
+
+			<div className="d-flex justify-content-between align-items-center mt-4">
+				<div className="prev">
+					{films.previous !== null &&
+						<Button
+							onClick={() => setPage(prevValue => prevValue - 1)}
+							variant="primary"
+						>Previous Page</Button>}
+
+				</div>
+				<div className="page">{page} / {total_pages}</div>
+				<div className="next">
+					{films.next !== null &&
+						<Button
+							onClick={() => setPage(prevValue => prevValue + 1)}
+							variant="primary"
+						>Next Page</Button>}
+
+				</div>
+			</div>
 		</>
 	)
 }
