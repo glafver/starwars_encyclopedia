@@ -1,9 +1,6 @@
 import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
-import ListGroup from 'react-bootstrap/ListGroup'
-import ListGroupItem from 'react-bootstrap/ListGroupItem'
-import Card from 'react-bootstrap/Card'
-import Button from 'react-bootstrap/Button'
+import { ListGroup, ListGroupItem, Card, Row, Col, Button } from 'react-bootstrap'
 import SWpediaAPI from '../services/SWpediaAPI'
 import { getIdFromUrl } from '../helpers'
 
@@ -34,23 +31,26 @@ const FilmsPage = () => {
 			<h1>Films</h1>
 
 			{films.results.length > 0 && (
-				<div className='d-flex flex-wrap'>
+				<Row sm={2}>
 					{films.results.map(film =>
-						<Card className='col-6' key={film.title}>
-							<Card.Header as="h5">{film.title}</Card.Header>
-							<Card.Body>
-								<ListGroup className="list-group-flush">
-									<ListGroupItem><b>Episode</b> {film.episode_id}</ListGroupItem>
-									<ListGroupItem><b>Released</b> {film.release_date}</ListGroupItem>
-									<ListGroupItem>{film.characters.length} <b>characters</b></ListGroupItem>
-								</ListGroup>
-								<Button variant="primary" as={Link} to={`/films/${getIdFromUrl(film.url)}`}>Read more</Button>
-							</Card.Body>
-						</Card>
+						<Col key={film.title}>
+							<Card className='mb-4' >
+								<Card.Header as="h5">{film.title}</Card.Header>
+								<Card.Body>
+									<ListGroup className="list-group-flush">
+										<ListGroupItem><b>Episode</b> {film.episode_id}</ListGroupItem>
+										<ListGroupItem><b>Released</b> {film.release_date}</ListGroupItem>
+										<ListGroupItem>{film.characters.length} <b>characters</b></ListGroupItem>
+									</ListGroup>
+									<Button variant="primary" as={Link} to={`/films/${getIdFromUrl(film.url)}`}>Read more</Button>
+								</Card.Body>
+							</Card>
+						</Col>
 					)}
-				</div>
+				</Row>
 
-			)}
+			)
+			}
 
 			<div className="d-flex justify-content-between align-items-center mt-4">
 				<div className="prev">

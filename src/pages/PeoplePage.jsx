@@ -1,70 +1,102 @@
 import { useEffect, useState } from 'react'
-import { Link } from 'react-router-dom'
-import ListGroup from 'react-bootstrap/ListGroup'
-import ListGroupItem from 'react-bootstrap/ListGroupItem'
-import Card from 'react-bootstrap/Card'
-import Button from 'react-bootstrap/Button'
+import { Link, useSearchParams } from 'react-router-dom'
+import { ListGroup, ListGroupItem, Card, Row, Col, Button } from 'react-bootstrap'
 import SWpediaAPI from '../services/SWpediaAPI'
 import { getIdFromUrl } from '../helpers'
+import Search from '../components/Search'
 
-const HomePage = () => {
+const PeoplePage = () => {
 	const [people, setPeople] = useState([])
+	const [searchParams, setSearchParams] = useSearchParams('')
+	const [query, setQuery] = useState()
 	const [page, setPage] = useState(1)
-	const [total_pages, setTotalPages] = useState(0)
+	const [pages, setPages] = useState(1)
 
-	const getPeople = async (page) => {
-		const data = await SWpediaAPI.get(`people/?page=${page}`)
+	const params_query = searchParams.get('query')
+	const params_page = searchParams.get('page')
+	const params_pages = searchParams.get('pages')
+
+	const searchPeople = async (params, page) => {
+		setPeople([])
+		const data = await SWpediaAPI.get(`people/?${params}page=${page}`)
 		setPeople(data)
+		if (page === 1 && data.count > 1) {
+			setPages(Math.ceil(data.count / data.results.length))
+		}
 	}
 
 	useEffect(() => {
-		getPeople(page)
-	}, [page])
+		searchPeople(`search=${query}&`, page)
+	}, [query, page])
+
+	useEffect(() => {
+		if (!params_page) {
+			setPage(1)
+		} else {
+			setPage(parseInt(params_page))
+		}
+
+		if (!params_query) {
+			setQuery('')
+		} else {
+			setQuery(params_query)
+		}
+
+		if (!params_pages) {
+			setPages(1)
+		} else {
+			setPages(params_pages)
+		}
+	}, [params_query, params_page, params_pages])
 
 	if (people.length === 0) {
 		return <p>Loading...</p>
 	}
 
-	if (people.length !== 0 && total_pages === 0 && page === 1) {
-		setTotalPages(Math.ceil(people.count / people.results.length))
-	}
-
 	return (
-		<>
-			<h1>People</h1>
 
+		<>
+			<Search />
+			<h1>People</h1>
+			{query && (
+				<p><b>{people.count} search result{people.count > 1 && 's'}{people.count === 0 && 's'} for '{query}'...</b></p>
+			)}
 			{people.results.length > 0 && (
-				<div className='d-flex flex-wrap'>
+				<Row sm={2}>
 					{people.results.map(person =>
-						<Card className='col-6' key={person.name}>
-							<Card.Header as="h5">{person.name}</Card.Header>
-							<Card.Body>
-								<ListGroup className="list-group-flush">
-									<ListGroupItem><b>Gender</b> {person.gender}</ListGroupItem>
-									<ListGroupItem><b>Born</b> {person.birth_year}</ListGroupItem>
-									<ListGroupItem><b>In</b> {person.films.length} films</ListGroupItem>
-								</ListGroup>
-								<Button variant="primary" as={Link} to={`/people/${getIdFromUrl(person.url)}`}>Read more</Button>							</Card.Body>
-						</Card>
+						<Col key={person.name}>
+							<Card className='mb-4'>
+								<Card.Header as="h5">{person.name}</Card.Header>
+								<Card.Body>
+									<ListGroup className="list-group-flush">
+										<ListGroupItem><b>Gender</b> {person.gender}</ListGroupItem>
+										<ListGroupItem><b>Born</b> {person.birth_year}</ListGroupItem>
+										<ListGroupItem><b>In</b> {person.films.length} films</ListGroupItem>
+									</ListGroup>
+									<Button variant="primary" as={Link} to={`/people/${getIdFromUrl(person.url)}`}>Read more</Button>							</Card.Body>
+							</Card>
+						</Col>
 					)}
-				</div>
+				</Row>
 
 			)}
+
 
 			<div className="d-flex justify-content-between align-items-center mt-4">
 				<div className="prev">
 					{people.previous !== null &&
 						<Button
-							onClick={() => setPage(prevValue => prevValue - 1)}
+							onClick={() => setSearchParams({ query: query, page: page - 1, pages: pages })}
+
 							variant="primary"
 						>Previous Page</Button>}
 
 				</div>
-				<div className="page">{page} / {total_pages}</div>
+				<div className="page">{page} / {pages}</div>
 				<div className="next">
 					{people.next !== null &&
 						<Button
-							onClick={() => setPage(prevValue => prevValue + 1)}
+							onClick={() => setSearchParams({ query: query, page: page + 1, pages: pages })}
 							variant="primary"
 						>Next Page</Button>}
 
@@ -74,5 +106,5 @@ const HomePage = () => {
 	)
 }
 
-export default HomePage;
+export default PeoplePage;
 
