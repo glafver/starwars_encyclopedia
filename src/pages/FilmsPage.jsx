@@ -1,35 +1,54 @@
 import { useEffect, useState } from 'react'
-import { Link } from 'react-router-dom'
+import { Link, useSearchParams } from 'react-router-dom'
 import { ListGroup, ListGroupItem, Card, Row, Col, Button } from 'react-bootstrap'
 import SWpediaAPI from '../services/SWpediaAPI'
 import { getIdFromUrl } from '../helpers'
+import Search from '../components/Search'
 
 const FilmsPage = () => {
 	const [films, setFilms] = useState([])
-	const [page, setPage] = useState(1)
-	const [total_pages, setTotalPages] = useState(0)
+	const [searchParams, setSearchParams] = useSearchParams('')
 
-	const getFilms = async () => {
-		const data = await SWpediaAPI.get('films')
+	const [query, setQuery] = useState()
+	const [page, setPage] = useState(1)
+	const [pages, setPages] = useState(1)
+
+	const params_query = searchParams.get('query')
+	const params_page = searchParams.get('page')
+	const params_pages = searchParams.get('pages')
+
+	const getFilms = async (query, page) => {
+		setFilms([])
+		const data = await SWpediaAPI.get(`films/?search=${query}&page=${page}`)
 		setFilms(data)
+		if (page === 1 && data.count > 1) {
+			setPages(Math.ceil(data.count / data.results.length))
+		}
 	}
 
 	useEffect(() => {
-		getFilms()
-	}, [])
+		getFilms(query, page)
+	}, [query, page])
 
-	if (films.length !== 0 && total_pages === 0 && page === 1) {
-		setTotalPages(Math.ceil(films.count / films.results.length))
-	}
+	useEffect(() => {
 
-	if (films.length === 0) {
+		!params_page ? setPage(1) : setPage(parseInt(params_page))
+		!params_query ? setQuery('') : setQuery(params_query)
+		!params_pages ? setPages(1) : setPages(params_pages)
+
+	}, [params_query, params_page, params_pages])
+
+	if (films.length === 0 || (!query && films.count === 0)) {
 		return <p>Loading...</p>
 	}
 
 	return (
 		<>
+			<Search />
 			<h1>Films</h1>
-
+			{query && (
+				<p><b>{films.count} search result{films.count > 1 && 's'}{films.count === 0 && 's'} for '{query}'...</b></p>
+			)}
 			{films.results.length > 0 && (
 				<Row sm={2}>
 					{films.results.map(film =>
@@ -48,7 +67,6 @@ const FilmsPage = () => {
 						</Col>
 					)}
 				</Row>
-
 			)
 			}
 
@@ -56,16 +74,15 @@ const FilmsPage = () => {
 				<div className="prev">
 					{films.previous !== null &&
 						<Button
-							onClick={() => setPage(prevValue => prevValue - 1)}
-							variant="primary"
+							onClick={() => setSearchParams({ query: query, page: page - 1, pages: pages })} variant="primary"
 						>Previous Page</Button>}
 
 				</div>
-				<div className="page">{page} / {total_pages}</div>
+				<div className="page">{page} / {pages}</div>
 				<div className="next">
 					{films.next !== null &&
 						<Button
-							onClick={() => setPage(prevValue => prevValue + 1)}
+							onClick={() => setSearchParams({ query: query, page: page + 1, pages: pages })}
 							variant="primary"
 						>Next Page</Button>}
 
