@@ -19,7 +19,7 @@ const PeoplePage = () => {
 
 	const getPeople = async (query, page) => {
 		setPeople([])
-		const data = await SWpediaAPI.get(`people/?search=${query}&page=${page}`)
+		const data = await SWpediaAPI(`people/?search=${query}&page=${page}`)
 		setPeople(data)
 		if (page === 1 && data.count > 1) {
 			setPages(Math.ceil(data.count / data.results.length))

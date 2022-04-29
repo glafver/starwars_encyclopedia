@@ -19,7 +19,7 @@ const FilmsPage = () => {
 
 	const getFilms = async (query, page) => {
 		setFilms([])
-		const data = await SWpediaAPI.get(`films/?search=${query}&page=${page}`)
+		const data = await SWpediaAPI(`films/?search=${query}&page=${page}`)
 		setFilms(data)
 		if (page === 1 && data.count > 1) {
 			setPages(Math.ceil(data.count / data.results.length))

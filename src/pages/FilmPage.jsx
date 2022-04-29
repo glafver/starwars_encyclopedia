@@ -10,7 +10,7 @@ const FilmPage = () => {
     const navigate = useNavigate()
 
     const get = async (id) => {
-        const film = await SWpediaAPI.get(`films/` + id)
+        const film = await SWpediaAPI(`films/` + id)
         setFilm(film)
     }
 

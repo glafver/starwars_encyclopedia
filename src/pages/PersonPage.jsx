@@ -11,7 +11,7 @@ const PersonPage = () => {
 
 
     const get = async (id) => {
-        const data = await SWpediaAPI.get(`people/` + id)
+        const data = await SWpediaAPI(`people/` + id)
         setPerson(data)
     }
 

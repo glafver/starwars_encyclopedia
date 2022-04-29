@@ -8,6 +8,4 @@ const get = async (endpoint) => {
 	return response.data
 }
 
-export default {
-	get
-}
+export default get
