@@ -1,8 +1,8 @@
 import './App.css';
+import './index.css'
 import Container from 'react-bootstrap/Container'
 import { Routes, Route } from 'react-router-dom'
 import Navigation from './components/Navigation'
-import Search from './components/Search'
 import HomePage from './pages/HomePage'
 import FilmsPage from './pages/FilmsPage'
 import FilmPage from './pages/FilmPage'
@@ -13,8 +13,7 @@ function App() {
   return (
     <div id="App">
       <Navigation />
-      <Container className="py-3">
-        {/* <Search /> */}
+      <Container className="py-3" >
         <Routes>
           <Route path="/" element={<HomePage />} />
           <Route path="/films" element={<FilmsPage />} />

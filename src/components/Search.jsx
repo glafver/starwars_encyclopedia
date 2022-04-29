@@ -30,7 +30,7 @@ const Search = () => {
             <Form onSubmit={handleSubmit}>
                 <Form.Group as={Row} className="mb-3" >
                     <Col sm="10">
-                        <Form.Control className='col-6'
+                        <Form.Control className='col-6 '
                             onChange={e => setSearchInput(e.target.value)}
                             placeholder="What are you looking for?"
                             ref={searchInputRef}
@@ -38,7 +38,7 @@ const Search = () => {
                             type="text"
                             value={searchInput} />
                     </Col>
-                    <Col sm="2"><Button variant="success" type="submit" >Search</Button>
+                    <Col sm="2"><Button className='SWbutton' variant="success" type="submit" >Search</Button>
                     </Col>
                 </Form.Group>
             </Form>

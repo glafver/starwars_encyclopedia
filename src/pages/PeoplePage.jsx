@@ -75,7 +75,7 @@ const PeoplePage = () => {
 					{people.previous !== null &&
 						<Button
 							onClick={() => setSearchParams({ query: query, page: page - 1, pages: pages })}
-							variant="primary"
+							variant="primary" className='SWbutton'
 						>Previous Page</Button>}
 				</div>
 
@@ -85,7 +85,7 @@ const PeoplePage = () => {
 					{people.next !== null &&
 						<Button
 							onClick={() => setSearchParams({ query: query, page: page + 1, pages: pages })}
-							variant="primary"
+							variant="primary" className='SWbutton'
 						>Next Page</Button>}
 				</div>
 			</div>

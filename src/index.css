@@ -11,3 +11,20 @@ code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
     monospace;
 }
+
+.StarWars {
+  font-family: 'StarWars' !important;
+  margin: auto 3%;
+  text-shadow: 1px 1px 2px black;
+  color: #f0d655;
+}
+
+.btn-primary {
+  background-color: #465c9a !important;
+  border-color: #354674 !important;
+}
+
+.SWbutton {
+  background-color: #6d9231 !important;
+  border-color: #60802c !important;
+}
