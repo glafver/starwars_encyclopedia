@@ -1,0 +1,1 @@
+https://star-wars-encyclopedia.netlify.app/
