@@ -6,20 +6,28 @@ import { getIdFromUrl } from '../helpers'
 
 const PersonPage = () => {
     const [person, setPerson] = useState()
+    const [films, setFilms] = useState()
     const { id } = useParams()
     const navigate = useNavigate()
 
 
     const get = async (id) => {
-        const data = await SWpediaAPI(`people/` + id)
-        setPerson(data)
+        const person = await SWpediaAPI(`people/` + id)
+        const films = []
+        for (let i = 0; i < person.films.length; i++) {
+            const id = getIdFromUrl(person.films[i])
+            const film = await SWpediaAPI(`films/` + id)
+            films.push({ 'id': id, 'title': film.title })
+        }
+        setFilms(films)
+        setPerson(person)
     }
 
     useEffect(() => {
         get(id)
     }, [id])
 
-    if (!person) {
+    if (!person && !films) {
         return <p>Loading...</p>
     }
 
@@ -46,9 +54,8 @@ const PersonPage = () => {
                             <Col sm={10}>
                                 <Card style={{ width: '18rem' }}>
                                     <ListGroup variant="flush">
-                                        {person.films.map(film => {
-                                            const id = getIdFromUrl(film)
-                                            return <ListGroup.Item key={id} as={Link} to={`/films/${id}`}> Film {id} ⟫</ListGroup.Item>
+                                        {films.map(film => {
+                                            return <ListGroup.Item key={film.id} as={Link} to={`/films/${film.id}`}> {film.title} ⟫</ListGroup.Item>
                                         })}
                                     </ListGroup>
                                 </Card>

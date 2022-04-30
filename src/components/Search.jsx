@@ -23,6 +23,7 @@ const Search = () => {
             return
         }
         setSearchInput(query)
+        searchInputRef.current.focus()
     }, [query])
 
     return (
